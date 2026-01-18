@@ -1,0 +1,111 @@
+<%- include("partials/header") %>
+
+  <div class="sort-bar">
+    <a href="/?sort=rating" class="<%= currentSort === 'rating' ? 'active' : '' %>">⭐ Rating</a>
+    <a href="/?sort=recent" class="<%= !currentSort || currentSort === 'recent' ? 'active' : '' %>">🕒 Recent</a>
+    <a href="/?sort=title" class="<%= currentSort === 'title' ? 'active' : '' %>">🔤 Title</a>
+  </div>
+
+  <% if (books.length===0) { %>
+    <div class="empty-state" style="text-align: center; padding: 4rem 1rem;">
+      <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div>
+      <h2 style="color: var(--text-main); margin-bottom: 1rem;">No books here yet!</h2>
+      <p style="color: var(--text-muted); margin-bottom: 2rem;">It looks like you haven't added any books to your
+        collection.</p>
+      <a href="/add" style="
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-block;
+        transition: transform 0.2s;
+      " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        Add Your First Book
+      </a>
+    </div>
+    <% } else { %>
+      <div class="book-grid">
+        <% books.forEach(book=> { %>
+          <div class="book-card" onclick="window.location.href='/book/<%= book.id %>'" style="cursor: pointer;">
+            <img src="<%= book.cover_url %>" alt="Book cover" />
+            <h3>
+              <a href="/book/<%= book.id %>">
+                <%= book.title %>
+              </a>
+            </h3>
+            <p class="author">
+              <%= book.author %>
+            </p>
+            <p class="notes">
+              <%= book.notes %>
+            </p>
+            <a href="/book/<%= book.id %>" class="read-more">Read Full Notes &rarr;</a>
+            <div class="meta">
+              <div class="star-rating">
+                <% const rating=parseFloat(book.rating) || 0; %>
+                  <% for (let i=1; i <=5; i++) { %>
+                    <% if (i <=Math.floor(rating)) { %>
+                      <span class="star filled">★</span>
+                      <% } else if (i===Math.ceil(rating) && rating % 1 !==0) { %>
+                        <span class="star partial" style="--fill-percent: <%= (rating % 1) * 100 %>%">★</span>
+                        <% } else { %>
+                          <span class="star empty">★</span>
+                          <% } %>
+                            <% } %>
+                              <span class="rating-value">(<%= book.rating %>)</span>
+              </div>
+              <span>📅 <%= book.date_read %></span>
+            </div>
+            <div class="actions">
+              <a href="/edit/<%= book.id %>">Edit</a>
+              <button type="button" class="delete-btn" data-id="<%= book.id %>"
+                data-title="<%= book.title %>">Delete</button>
+            </div>
+          </div>
+          <% }) %>
+      </div>
+      <% } %>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal-overlay" id="deleteModal">
+          <div class="modal">
+            <h3>🗑️ Delete Book</h3>
+            <p>Are you sure you want to delete "<span id="bookTitleToDelete"></span>"?</p>
+            <form id="deleteForm" method="POST" action="">
+              <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button type="submit" class="btn-delete">Yes, Delete</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>
+          // Add click handlers to all delete buttons
+          document.querySelectorAll('.delete-btn').forEach(function (btn) {
+            btn.addEventListener('click', function (e) {
+              e.stopPropagation(); // Prevent card click
+              var bookId = this.getAttribute('data-id');
+              var bookTitle = this.getAttribute('data-title');
+              document.getElementById('bookTitleToDelete').textContent = bookTitle;
+              document.getElementById('deleteForm').action = '/delete/' + bookId;
+              document.getElementById('deleteModal').classList.add('active');
+            });
+          });
+
+          function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+          }
+
+          // Close modal when clicking outside
+          document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+              closeDeleteModal();
+            }
+          });
+        </script>
+
+        <%- include("partials/footer") %>

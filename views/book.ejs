@@ -1,0 +1,91 @@
+<%- include("partials/header") %>
+
+    <div class="book-detail-container">
+        <div class="book-detail-card">
+            <div class="book-detail-header">
+                <div class="book-cover-large">
+                    <img src="<%= book.cover_url %>" alt="<%= book.title %> cover" />
+                </div>
+                <div class="book-info-large">
+                    <h1 class="detail-title">
+                        <%= book.title %>
+                    </h1>
+                    <h2 class="detail-author">by <%= book.author %>
+                    </h2>
+
+                    <div class="detail-meta">
+                        <div class="star-rating large">
+                            <% const rating=parseFloat(book.rating) || 0; %>
+                                <% for (let i=1; i <=5; i++) { %>
+                                    <% if (i <=Math.floor(rating)) { %>
+                                        <span class="star filled">★</span>
+                                        <% } else if (i===Math.ceil(rating) && rating % 1 !==0) { %>
+                                            <span class="star partial"
+                                                style="--fill-percent: <%= (rating % 1) * 100 %>%">★</span>
+                                            <% } else { %>
+                                                <span class="star empty">★</span>
+                                                <% } %>
+                                                    <% } %>
+                                                        <span class="rating-value">(<%= book.rating %>)</span>
+                        </div>
+                        <span class="detail-date">Read on <%= book.date_read %></span>
+                    </div>
+
+                    <div class="detail-actions">
+                        <a href="/edit/<%= book.id %>" class="btn-edit">Edit Book</a>
+                        <button type="button" class="btn-delete"
+                            onclick="openDeleteModal('<%= book.id %>', '<%= book.title %>')">Delete Book</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="book-notes-section">
+                <h3>My Notes</h3>
+                <div class="notes-content">
+                    <% if (book.notes) { %>
+                        <% book.notes.split('\n').forEach(function(paragraph) { %>
+                            <p>
+                                <%= paragraph %>
+                            </p>
+                            <% }); %>
+                                <% } else { %>
+                                    <p class="no-notes">No notes added yet.</p>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal (Reused) -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3>🗑️ Delete Book</h3>
+            <p>Are you sure you want to delete "<span id="bookTitleToDelete"></span>"?</p>
+            <form id="deleteForm" method="POST" action="">
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                    <button type="submit" class="btn-delete">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openDeleteModal(id, title) {
+            document.getElementById('bookTitleToDelete').textContent = title;
+            document.getElementById('deleteForm').action = '/delete/' + id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+        }
+
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+    </script>
+
+    <%- include("partials/footer") %>

@@ -1,0 +1,28 @@
+<%- include("partials/header") %>
+
+  <div class="book-form">
+    <h2>Edit Book</h2>
+    <form method="POST" action="/edit/<%= book.id %>">
+      <label>Title</label>
+      <input name="title" value="<%= book.title %>" required />
+
+      <label>Author</label>
+      <input name="author" value="<%= book.author %>" />
+
+      <label>Rating (0–5)</label>
+      <input type="number" name="rating" min="0" max="5" step="0.1" value="<%= book.rating %>" />
+
+      <label>Notes</label>
+      <textarea name="notes"><%= book.notes %></textarea>
+
+      <label>Date Read</label>
+      <input name="date_read" value="<%= book.date_read %>" />
+
+      <label>Cover URL</label>
+      <input name="cover_url" value="<%= book.cover_url %>" />
+
+      <button>Save Changes</button>
+    </form>
+  </div>
+
+  <%- include("partials/footer") %>

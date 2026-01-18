@@ -1,0 +1,33 @@
+<% if (success_msg && success_msg.length> 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ <%= success_msg %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <% } %>
+
+        <% if (error_msg && error_msg.length> 0) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                ⚠️ <%= error_msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+
+                <% if (error && error.length> 0) { %>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        ⚠️ <%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+
+                        <script>
+                            // Simple Vanilla JS to hide messages
+                            setTimeout(function () {
+                                const messages = document.querySelectorAll('.alert');
+                                messages.forEach(function (msg) {
+                                    msg.style.opacity = '0'; // Start fade out
+                                    setTimeout(function () {
+                                        msg.remove(); // Completely remove from page after fade
+                                    }, 500);
+                                });
+                            }, 3000); // 3 seconds
+                        </script>
