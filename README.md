@@ -125,6 +125,3 @@ This project is an extended and improved version of an earlier CRUD-only applica
 ## Author
 
 Developed by Neda Alipour
-
-* Help you write a **portfolio description** for your personal website
-* Suggest **commit messages** and repo structure for professionalism
