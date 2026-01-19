@@ -110,7 +110,7 @@ async function getCoverFromOpenLibrary(title, author) {
 // Landing page - redirect based on auth status
 app.get("/", (req, res) => {
   if (req.isAuthenticated()) {
-    res.redirect("/book-notes");
+    res.redirect("/book-tracker");
   } else {
     res.redirect("/login");
   }
@@ -141,9 +141,9 @@ app.get(
 );
 
 app.get(
-  "/auth/google/book-notes",
+  "/auth/google/book-tracker",
   passport.authenticate("google", {
-    successRedirect: "/book-notes",
+    successRedirect: "/book-tracker",
     failureRedirect: "/login",
   })
 );
@@ -151,7 +151,7 @@ app.get(
 app.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/book-notes",
+    successRedirect: "/book-tracker",
     failureRedirect: "/login",
     failureFlash: true,
   })
@@ -182,7 +182,7 @@ app.post("/register", async (req, res) => {
           req.login(user, (err) => {
             console.log("success");
             req.flash("success", "You are now registered and logged in");
-            res.redirect("/book-notes");
+            res.redirect("/book-tracker");
           });
         }
       });
@@ -194,7 +194,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.get("/book-notes", ensureAuthenticated, async (req, res) => {
+app.get("/book-tracker", ensureAuthenticated, async (req, res) => {
   let sort = req.query.sort;
   let booksToShow = []
   try {
@@ -233,7 +233,7 @@ app.post("/add", ensureAuthenticated, async (req, res) => {
     console.log(err)
     req.flash("error", "Could not add book. Please try again.");
   }
-  res.redirect("/book-notes");
+  res.redirect("/book-tracker");
 });
 
 app.get("/book/:id", ensureAuthenticated, async (req, res) => {
@@ -244,11 +244,11 @@ app.get("/book/:id", ensureAuthenticated, async (req, res) => {
     if (result.rows.length > 0) {
       res.render("book.ejs", { book: result.rows[0] });
     } else {
-      res.redirect("/book-notes");
+      res.redirect("/book-tracker");
     }
   } catch (err) {
     console.log(err);
-    res.redirect("/book-notes");
+    res.redirect("/book-tracker");
   }
 });
 
@@ -261,11 +261,11 @@ app.get("/edit/:id", ensureAuthenticated, async (req, res) => {
     if (result.rows.length > 0) {
       res.render("edit.ejs", { book: result.rows[0] });
     } else {
-      res.redirect("/book-notes");
+      res.redirect("/book-tracker");
     }
   } catch (err) {
     console.log(err);
-    res.redirect("/book-notes");
+    res.redirect("/book-tracker");
   }
 });
 
@@ -283,7 +283,7 @@ app.post("/edit/:id", ensureAuthenticated, async (req, res) => {
     console.log(err);
     req.flash("error", "Could not update book.");
   }
-  res.redirect("/book-notes");
+  res.redirect("/book-tracker");
 });
 
 app.post("/delete/:id", ensureAuthenticated, async (req, res) => {
@@ -295,7 +295,7 @@ app.post("/delete/:id", ensureAuthenticated, async (req, res) => {
     console.log(err);
     req.flash("error", "Could not delete book.");
   }
-  res.redirect("/book-notes");
+  res.redirect("/book-tracker");
 });
 
 passport.use(
@@ -338,7 +338,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/auth/google/book-notes",
+      callbackURL: "http://localhost:3000/auth/google/book-tracker",
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
     },
     async (accessToken, refreshToken, profile, cb) => {
